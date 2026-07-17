@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import httpx
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -10,6 +13,9 @@ from backend.models import LeadModel
 from backend.schemas import AdminLoginSchema, LeadResponseSchema, LeadSchema, StatusUpdateSchema
 
 Base.metadata.create_all(bind=engine)
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(title="MarioProg Lead & CRM System", version="1.0.0")
 
@@ -185,6 +191,21 @@ async def telegram_webhook(request: Request, db: Session = Depends(get_db)):
     return {"ok": True}
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
+def serve_index():
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def serve_dashboard():
+    return FileResponse(FRONTEND_DIR / "dashboard.html")
+
+
+@app.get("/dashboard.html", response_class=HTMLResponse)
+def serve_dashboard_html():
+    return FileResponse(FRONTEND_DIR / "dashboard.html")
+
+
+@app.get("/health")
 def health_check():
     return {"status": "ok"}

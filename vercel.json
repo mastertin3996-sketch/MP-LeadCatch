@@ -12,16 +12,8 @@
       "dest": "backend/main.py"
     },
     {
-      "src": "/",
-      "dest": "/frontend/index.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/frontend/dashboard.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "dest": "backend/main.py"
     }
   ]
 }
