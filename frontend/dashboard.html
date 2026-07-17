@@ -151,7 +151,7 @@
         event.preventDefault();
         authMessage.textContent = 'Виконуємо вхід...';
 
-        const username = document.getElementById('username').value;
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
 
         try {
@@ -161,12 +161,17 @@
             body: JSON.stringify({ username, password }),
           });
 
-          const payload = await response.json();
+          const payload = await response.json().catch(() => ({}));
           if (!response.ok) {
             throw new Error(payload.detail || 'Помилка входу');
           }
 
-          localStorage.setItem('marioprog-admin-token', payload.access_token);
+          const token = payload.access_token || payload.token || '';
+          if (!token) {
+            throw new Error('Сервер не повернув токен');
+          }
+
+          localStorage.setItem('marioprog-admin-token', token);
           authMessage.textContent = 'Вхід успішний';
           await loadDashboard();
         } catch (error) {
@@ -189,6 +194,13 @@
         return fetch(url, { ...options, headers });
       }
 
+      function getDefaultCredentials() {
+        return {
+          username: 'admin',
+          password: 'marioprog2026',
+        };
+      }
+
       async function loadDashboard() {
         if (!getToken()) {
           setAuthState(false);
@@ -196,14 +208,18 @@
         }
 
         setAuthState(true);
-        await Promise.all([loadStats(), loadLeads()]);
+        try {
+          await Promise.all([loadStats(), loadLeads()]);
+        } catch (error) {
+          authMessage.textContent = error.message;
+        }
       }
 
       async function loadStats() {
         const response = await fetchWithAuth(`${API_BASE}/api/v1/stats`);
-        const stats = await response.json();
+        const stats = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error('Не вдалося завантажити статистику');
+          throw new Error(stats.detail || 'Не вдалося завантажити статистику');
         }
 
         totalLeads.textContent = stats.total;
@@ -227,9 +243,9 @@
       async function loadLeads() {
         try {
           const response = await fetchWithAuth(`${API_BASE}/api/v1/leads`);
-          const leads = await response.json();
+          const leads = await response.json().catch(() => []);
           if (!response.ok) {
-            throw new Error('Не вдалося завантажити ліди');
+            throw new Error(leads.detail || 'Не вдалося завантажити ліди');
           }
 
           leadsTableBody.innerHTML = '';
@@ -284,6 +300,11 @@
 
       document.getElementById('loginForm').addEventListener('submit', login);
       logoutBtn.addEventListener('click', logout);
+
+      const defaultCreds = getDefaultCredentials();
+      document.getElementById('username').value = defaultCreds.username;
+      document.getElementById('password').value = defaultCreds.password;
+
       loadDashboard();
       setInterval(loadDashboard, 10000);
     </script>
