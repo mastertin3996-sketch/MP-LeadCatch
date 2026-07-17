@@ -110,17 +110,6 @@ def create_lead(payload: LeadSchema, db: Session = Depends(get_db), background_t
     db.add(lead)
     db.commit()
     db.refresh(lead)
-
-    if background_tasks is not None:
-        send_telegram_message(
-            background_tasks=background_tasks,
-            lead_id=lead.id,
-            phone=lead.phone,
-            name=lead.name,
-            service=lead.service,
-            comment=lead.comment,
-        )
-
     return lead
 
 
