@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarioProg — Premium Lead CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: "#D4AF37",
+            },
+            boxShadow: {
+              premium: "0 20px 60px rgba(212, 175, 55, 0.18)",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(212,175,55,0.22),_transparent_40%)]"></div>
+      <header class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10">
+        <div>
+          <p class="text-sm uppercase tracking-[0.3em] text-gold">MarioProg</p>
+          <h1 class="text-xl font-semibold">Lead & CRM System</h1>
+        </div>
+        <a href="dashboard.html" class="rounded-full border border-gold/40 px-4 py-2 text-sm font-medium text-gold transition hover:bg-gold/10">Відкрити CRM</a>
+      </header>
+
+      <main class="mx-auto grid max-w-7xl gap-10 px-6 pb-20 pt-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:pt-16">
+        <section class="space-y-8">
+          <div class="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-sm text-gold">
+            Преміальний сервіс для B2B-продажів
+          </div>
+          <div class="space-y-4">
+            <h2 class="max-w-2xl text-4xl font-semibold leading-tight text-white sm:text-5xl">
+              Миттєве захоплення лідів для електротехнічного бізнесу
+            </h2>
+            <p class="max-w-2xl text-lg text-slate-300">
+              Коли клієнт звертається за допомогою, система автоматично створює новий лід, зберігає його в SQLite, надсилає сповіщення в Telegram і готує для вас готову воронку обробки.
+            </p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-premium">
+              <p class="text-2xl font-semibold text-gold">24/7</p>
+              <p class="mt-2 text-sm text-slate-400">Автоматична реакція на новий запит</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-premium">
+              <p class="text-2xl font-semibold text-gold">+45%</p>
+              <p class="mt-2 text-sm text-slate-400">Швидше реагування на потенційних клієнтів</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-premium">
+              <p class="text-2xl font-semibold text-gold">Telegram</p>
+              <p class="mt-2 text-sm text-slate-400">Паралельне сповіщення для команди</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-gold/20 bg-slate-900/80 p-8 shadow-premium backdrop-blur-xl">
+          <div class="mb-6 flex items-center justify-between">
+            <div>
+              <p class="text-sm uppercase tracking-[0.3em] text-gold">Форма заявки</p>
+              <h3 class="text-2xl font-semibold text-white">Залиште заявку</h3>
+            </div>
+            <div class="rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-sm text-gold">Безкоштовна консультація</div>
+          </div>
+
+          <form id="leadForm" class="space-y-4">
+            <div>
+              <label class="mb-2 block text-sm text-slate-300" for="name">Ваше ім'я</label>
+              <input id="name" name="name" type="text" required class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-gold" />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm text-slate-300" for="phone">Телефон</label>
+              <input id="phone" name="phone" type="tel" required placeholder="+380671234567" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-gold" />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm text-slate-300" for="service">Послуга</label>
+              <select id="service" name="service" required class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-gold">
+                <option value="">Оберіть послугу</option>
+                <option value="Електромонтажні роботи">Електромонтажні роботи</option>
+                <option value="Проєктування електрики">Проєктування електрики</option>
+                <option value="Розводка в квартирі">Розводка в квартирі</option>
+                <option value="Промислові мережі">Промислові мережі</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-2 block text-sm text-slate-300" for="comment">Коментар</label>
+              <textarea id="comment" name="comment" rows="3" class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-gold"></textarea>
+            </div>
+            <button type="submit" class="w-full rounded-2xl bg-gold px-4 py-3 font-semibold text-slate-950 transition hover:brightness-110">Надіслати заявку</button>
+          </form>
+          <p id="formMessage" class="mt-4 text-sm text-slate-400"></p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const form = document.getElementById('leadForm');
+      const formMessage = document.getElementById('formMessage');
+      const API_BASE = 'http://127.0.0.1:8000';
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        formMessage.textContent = 'Надсилаю заявку...';
+
+        const payload = {
+          name: document.getElementById('name').value,
+          phone: document.getElementById('phone').value,
+          service: document.getElementById('service').value,
+          comment: document.getElementById('comment').value,
+        };
+
+        try {
+          const response = await fetch(`${API_BASE}/api/v1/leads`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.detail || 'Не вдалося відправити заявку');
+          }
+
+          form.reset();
+          formMessage.textContent = 'Заявку успішно отримано. Менеджер зв'яжеться найближчим часом.';
+        } catch (error) {
+          formMessage.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>

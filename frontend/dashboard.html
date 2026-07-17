@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarioProg CRM Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: "#D4AF37",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="mx-auto max-w-7xl px-6 py-8 lg:px-10">
+      <header class="mb-8 flex flex-col gap-4 rounded-[2rem] border border-gold/20 bg-slate-900/80 p-6 shadow-2xl shadow-gold/10 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p class="text-sm uppercase tracking-[0.3em] text-gold">MarioProg CRM</p>
+          <h1 class="text-3xl font-semibold text-white">Панель керування лідами</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="logoutBtn" class="hidden rounded-full border border-gold/30 px-4 py-2 text-sm text-gold transition hover:bg-gold/10">Вийти</button>
+          <a href="/" class="rounded-full border border-gold/30 px-4 py-2 text-sm text-gold transition hover:bg-gold/10">Назад на лендинг</a>
+        </div>
+      </header>
+
+      <section id="loginPanel" class="mb-8 rounded-[2rem] border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-black/20">
+        <div class="max-w-xl">
+          <p class="text-sm uppercase tracking-[0.3em] text-gold">Адміністративний доступ</p>
+          <h2 class="mt-3 text-2xl font-semibold text-white">Увійдіть у CRM</h2>
+          <p class="mt-3 text-slate-400">Для перегляду лідів і зміни статусів введіть логін і пароль адміністратора.</p>
+        </div>
+        <form id="loginForm" class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto]">
+          <input id="username" type="text" placeholder="Логін" class="rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-gold" />
+          <input id="password" type="password" placeholder="Пароль" class="rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-gold" />
+          <button type="submit" class="rounded-2xl bg-gold px-5 py-3 font-semibold text-slate-950 transition hover:brightness-110">Увійти</button>
+        </form>
+        <p id="authMessage" class="mt-4 text-sm text-slate-400"></p>
+      </section>
+
+      <div id="dashboardContent" class="hidden">
+        <section class="mb-8 grid gap-4 md:grid-cols-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p class="text-sm text-slate-400">Усього лідів</p>
+            <p id="totalLeads" class="mt-2 text-3xl font-semibold text-gold">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p class="text-sm text-slate-400">Нові</p>
+            <p id="newLeads" class="mt-2 text-3xl font-semibold text-gold">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p class="text-sm text-slate-400">В процесі</p>
+            <p id="inProgressLeads" class="mt-2 text-3xl font-semibold text-gold">0</p>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
+            <p class="text-sm text-slate-400">Оброблені</p>
+            <p id="processedLeads" class="mt-2 text-3xl font-semibold text-gold">0</p>
+          </div>
+        </section>
+
+        <section class="mb-8 rounded-[2rem] border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-black/20">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-white">Розподіл по статусах</h2>
+            <p class="text-sm text-slate-400">Автоматичний огляд воронки</p>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <div class="mb-2 flex justify-between text-sm">
+                <span>Нові</span>
+                <span id="progressNew">0%</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800">
+                <div id="barNew" class="h-2 rounded-full bg-gold transition-all"></div>
+              </div>
+            </div>
+            <div>
+              <div class="mb-2 flex justify-between text-sm">
+                <span>В процесі</span>
+                <span id="progressInProgress">0%</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800">
+                <div id="barInProgress" class="h-2 rounded-full bg-sky-400 transition-all"></div>
+              </div>
+            </div>
+            <div>
+              <div class="mb-2 flex justify-between text-sm">
+                <span>Оброблені</span>
+                <span id="progressProcessed">0%</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800">
+                <div id="barProcessed" class="h-2 rounded-full bg-emerald-400 transition-all"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/20">
+          <div class="border-b border-slate-800 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">Список лідів</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+              <thead class="bg-slate-950/60 text-slate-300">
+                <tr>
+                  <th class="px-6 py-4">ID</th>
+                  <th class="px-6 py-4">Ім'я</th>
+                  <th class="px-6 py-4">Телефон</th>
+                  <th class="px-6 py-4">Послуга</th>
+                  <th class="px-6 py-4">Статус</th>
+                  <th class="px-6 py-4">Дата</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = new URLSearchParams(window.location.search).get('api') || 'http://127.0.0.1:8000';
+      const loginPanel = document.getElementById('loginPanel');
+      const dashboardContent = document.getElementById('dashboardContent');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const authMessage = document.getElementById('authMessage');
+      const leadsTableBody = document.getElementById('leadsTableBody');
+      const totalLeads = document.getElementById('totalLeads');
+      const newLeads = document.getElementById('newLeads');
+      const inProgressLeads = document.getElementById('inProgressLeads');
+      const processedLeads = document.getElementById('processedLeads');
+
+      function getToken() {
+        return localStorage.getItem('marioprog-admin-token');
+      }
+
+      function setAuthState(isAuthenticated) {
+        loginPanel.classList.toggle('hidden', isAuthenticated);
+        dashboardContent.classList.toggle('hidden', !isAuthenticated);
+        logoutBtn.classList.toggle('hidden', !isAuthenticated);
+      }
+
+      async function login(event) {
+        event.preventDefault();
+        authMessage.textContent = 'Виконуємо вхід...';
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch(`${API_BASE}/api/v1/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload.detail || 'Помилка входу');
+          }
+
+          localStorage.setItem('marioprog-admin-token', payload.access_token);
+          authMessage.textContent = 'Вхід успішний';
+          await loadDashboard();
+        } catch (error) {
+          authMessage.textContent = error.message;
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem('marioprog-admin-token');
+        setAuthState(false);
+        authMessage.textContent = 'Ви вийшли з панелі';
+      }
+
+      async function fetchWithAuth(url, options = {}) {
+        const token = getToken();
+        const headers = {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${token}`,
+        };
+        return fetch(url, { ...options, headers });
+      }
+
+      async function loadDashboard() {
+        if (!getToken()) {
+          setAuthState(false);
+          return;
+        }
+
+        setAuthState(true);
+        await Promise.all([loadStats(), loadLeads()]);
+      }
+
+      async function loadStats() {
+        const response = await fetchWithAuth(`${API_BASE}/api/v1/stats`);
+        const stats = await response.json();
+        if (!response.ok) {
+          throw new Error('Не вдалося завантажити статистику');
+        }
+
+        totalLeads.textContent = stats.total;
+        newLeads.textContent = stats.new;
+        inProgressLeads.textContent = stats.in_progress;
+        processedLeads.textContent = stats.processed;
+
+        const maxValue = Math.max(stats.total || 1, 1);
+        const newPercent = Math.round((stats.new / maxValue) * 100);
+        const inProgressPercent = Math.round((stats.in_progress / maxValue) * 100);
+        const processedPercent = Math.round((stats.processed / maxValue) * 100);
+
+        document.getElementById('progressNew').textContent = `${newPercent}%`;
+        document.getElementById('barNew').style.width = `${newPercent}%`;
+        document.getElementById('progressInProgress').textContent = `${inProgressPercent}%`;
+        document.getElementById('barInProgress').style.width = `${inProgressPercent}%`;
+        document.getElementById('progressProcessed').textContent = `${processedPercent}%`;
+        document.getElementById('barProcessed').style.width = `${processedPercent}%`;
+      }
+
+      async function loadLeads() {
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/api/v1/leads`);
+          const leads = await response.json();
+          if (!response.ok) {
+            throw new Error('Не вдалося завантажити ліди');
+          }
+
+          leadsTableBody.innerHTML = '';
+          leads.forEach((lead) => {
+            const row = document.createElement('tr');
+            row.className = 'bg-slate-900/40 hover:bg-slate-800/70';
+            row.innerHTML = `
+              <td class="px-6 py-4 text-slate-400">#${lead.id}</td>
+              <td class="px-6 py-4">${lead.name}</td>
+              <td class="px-6 py-4">${lead.phone}</td>
+              <td class="px-6 py-4">${lead.service}</td>
+              <td class="px-6 py-4">
+                <select data-id="${lead.id}" class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white">
+                  <option value="Новий" ${lead.status === 'Новий' ? 'selected' : ''}>Новий</option>
+                  <option value="В процесі" ${lead.status === 'В процесі' ? 'selected' : ''}>В процесі</option>
+                  <option value="Оброблено" ${lead.status === 'Оброблено' ? 'selected' : ''}>Оброблено</option>
+                  <option value="Відкладено" ${lead.status === 'Відкладено' ? 'selected' : ''}>Відкладено</option>
+                </select>
+              </td>
+              <td class="px-6 py-4 text-slate-400">${new Date(lead.created_at).toLocaleString('uk-UA')}</td>
+            `;
+            leadsTableBody.appendChild(row);
+          });
+
+          leadsTableBody.querySelectorAll('select').forEach((select) => {
+            select.addEventListener('change', async (event) => {
+              await updateLeadStatus(event.target.getAttribute('data-id'), event.target.value);
+            });
+          });
+        } catch (error) {
+          leadsTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-6 text-center text-red-400">${error.message}</td></tr>`;
+        }
+      }
+
+      async function updateLeadStatus(leadId, status) {
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/api/v1/leads/${leadId}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Не вдалося оновити статус');
+          }
+
+          await loadDashboard();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      document.getElementById('loginForm').addEventListener('submit', login);
+      logoutBtn.addEventListener('click', logout);
+      loadDashboard();
+      setInterval(loadDashboard, 10000);
+    </script>
+  </body>
+</html>
