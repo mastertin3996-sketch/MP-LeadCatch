@@ -52,17 +52,20 @@ def send_telegram_message(background_tasks: BackgroundTasks, lead_id: int, phone
     }
 
     async def _send():
-        async with httpx.AsyncClient() as client:
-            await client.post(
-                f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": settings.TELEGRAM_CHAT_ID,
-                    "text": message_text,
-                    "parse_mode": "HTML",
-                    "reply_markup": keyboard,
-                },
-                timeout=10.0,
-            )
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage",
+                    json={
+                        "chat_id": settings.TELEGRAM_CHAT_ID,
+                        "text": message_text,
+                        "parse_mode": "HTML",
+                        "reply_markup": keyboard,
+                    },
+                    timeout=10.0,
+                )
+        except Exception:
+            return
 
     background_tasks.add_task(_send)
 
@@ -96,7 +99,7 @@ def admin_login(payload: AdminLoginSchema):
 
 
 @app.post("/api/v1/leads", response_model=LeadResponseSchema, status_code=201)
-def create_lead(payload: LeadSchema, db: Session = Depends(get_db), background_tasks: BackgroundTasks = None):
+def create_lead(payload: LeadSchema, db: Session = Depends(get_db), background_tasks=None):
     lead = LeadModel(
         name=payload.name,
         phone=payload.phone,
