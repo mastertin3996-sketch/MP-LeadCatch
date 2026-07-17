@@ -70,6 +70,25 @@
             <div class="rounded-full border border-gold/20 bg-gold/10 px-3 py-1 text-sm text-gold">Безкоштовна консультація</div>
           </div>
 
+          <div class="mb-6 grid gap-3 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <p class="text-sm font-semibold text-gold">⚡ Захоплення лідів</p>
+              <p class="mt-2 text-sm text-slate-400">Заявка з лендингу миттєво зберігається в CRM і стає доступною для обробки.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <p class="text-sm font-semibold text-gold">📊 CRM-облік</p>
+              <p class="mt-2 text-sm text-slate-400">Адмін-панель показує всі ліди, їх статуси та аналітику в реальному часі.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <p class="text-sm font-semibold text-gold">🤖 Telegram-сповіщення</p>
+              <p class="mt-2 text-sm text-slate-400">Бот надсилає повідомлення з кнопками для швидкого телефону та підтвердження обробки.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <p class="text-sm font-semibold text-gold">✅ Webhook-обробка</p>
+              <p class="mt-2 text-sm text-slate-400">Після натискання кнопки “Оброблено” статус ліда змінюється і повідомлення оновлюється.</p>
+            </div>
+          </div>
+
           <form id="leadForm" class="space-y-4">
             <div>
               <label class="mb-2 block text-sm text-slate-300" for="name">Ваше ім'я</label>
@@ -103,7 +122,9 @@
     <script>
       const form = document.getElementById('leadForm');
       const formMessage = document.getElementById('formMessage');
-      const API_BASE = 'http://127.0.0.1:8000';
+      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000'
+        : window.location.origin;
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
